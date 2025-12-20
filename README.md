@@ -175,8 +175,8 @@ backend/
 # Start Backend
 uvicorn app.main:app --reload
 
-# Start Backend
-uvicorn app.main:app --reload
+# Start Frontend
+streamlit run streamlit_app.py
 
 ## Example Voice Queries
 
