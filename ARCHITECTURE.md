@@ -84,19 +84,20 @@ Each user session maintains:
 
 Memory is stored in PostgreSQL and persists across turns.
 
-Example:
+    ```md
+    Example:
 
-```json
-{
-  "facts": {
-    "income": 200000,
-    "state": "Odisha"
-  },
-  "history": [
-    {"role": "user", "text": "ମୋ ଆୟ ୨ ଲକ୍ଷ"},
-    {"role": "assistant", "text": "ଆପଣ PMAY ପାଇଁ ପାତ୍ର..."}
-  ]
-}
+    ```json
+    {
+    "facts": {
+        "income": 200000,
+        "state": "Odisha"
+    },
+    "history": [
+        { "role": "user", "text": "ମୋ ଆୟ ୨ ଲକ୍ଷ" },
+        { "role": "assistant", "text": "ଆପଣ PMAY ପାଇଁ ଯୋଗ୍ୟ..." }
+    ]
+    } 
 
 --- 
 
