@@ -98,35 +98,20 @@ Example:
   ]
 }
 
-6. Prompt Design Strategy
+--- 
 
-Planner prompts are designed to:
+## 6. Prompt Design Strategy
 
-Enforce language constraints
+**Language Enforcement → Hallucination Prevention → Explicit Tool Selection → JSON-Only Output → Deterministic Execution**
 
-Prevent hallucination
+---
 
-Force explicit tool selection
+## 7. Failure Handling
 
-Output only machine-readable JSON
+**STT Confidence Failure → LLM Timeout (Retry) → Invalid JSON Recovery → Tool Execution Failure → Safe Fallback**
+---
 
-This ensures deterministic behavior and safe execution.
-
-7. Failure Handling
-
-The system handles:
-
-STT confidence failures
-
-LLM timeouts (retry)
-
-Invalid JSON outputs
-
-Tool execution failures
-
-Safe fallbacks ensure the system always responds.
-
-8. Why This Is Not a Chatbot
+## 8. Why This Is Not a Chatbot
 
 | Feature       | Chatbot | This System |
 | ------------- | ------- | ----------- |
@@ -136,8 +121,7 @@ Safe fallbacks ensure the system always responds.
 | Planning      | ❌       | ✅           |
 | Evaluation    | ❌       | ✅           |
 
+---
+## 9. Conclusion
 
-9. Conclusion
-
-This architecture demonstrates a production-aligned agentic AI system
-with voice-first interaction, multilingual support, and explainable decision-making.
+**Voice-First Interaction → Multilingual Support → Agentic Reasoning → Persistent Memory → Production-Grade AI System**
