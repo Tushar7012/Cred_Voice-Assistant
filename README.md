@@ -73,43 +73,41 @@ User (Audio Response)
 ## 🔁 Agent Lifecycle
 # 1️⃣ Planner (LLM)
 
-Interprets user intent
+- Extracts structured facts (age, income, state)
 
-Extracts structured facts (age, income, state)
+- Decides which tool to use
 
-Decides which tool to use
-
-Outputs strict JSON plan
+- Outputs strict JSON plan
 
 # 2️⃣ Executor
 
-Executes selected tool:
+- Executes selected tool:
 
-Scheme Retriever (RAG)
+- Scheme Retriever (RAG)
 
-Eligibility Checker
+- Eligibility Checker
 
-Direct Answer
+- Direct Answer
 
 # 3️⃣ Evaluator
 
-Validates response quality
+- Validates response quality
 
-Prevents fallback loops
+- Prevents fallback loops
 
-Rejects empty or generic replies
+- Rejects empty or generic replies
 
 ## 🧠 Memory Architecture
 
-Each user session maintains:
+- Each user session maintains:
 
-Facts (age, income, state)
+- Facts (age, income, state)
 
-Conversation history
+- Conversation history
 
-Detected contradictions
+- Detected contradictions
 
-Memory persists across turns using PostgreSQL.
+- Memory persists across turns using PostgreSQL.
 
 Example:
 ```json
@@ -128,14 +126,65 @@ Example:
 
 ## Prompt Design Strategy
 
-Planner prompts are designed to:
+- Planner prompts are designed to:
 
-Enforce language constraints
+- Enforce language constraints
 
-Prevent hallucinations
+- Prevent hallucinations
 
-Force explicit tool selection
+- Force explicit tool selection
 
-Output JSON-only responses
+- Output JSON-only responses
 
-Enable deterministic execution
+- Enable deterministic execution
+
+## Failure Handling
+
+- The system safely handles:
+
+- STT confidence failures
+
+- LLM timeouts (retry mechanism)
+
+- Invalid JSON outputs
+
+- Tool execution failures
+
+## Project Structure
+
+backend/
+├── app/
+│   ├── agent/          # Planner, Executor, Evaluator
+│   ├── api/            # FastAPI endpoints
+│   ├── rag/            # FAISS + Retriever
+│   ├── tools/          # Scheme & Eligibility tools
+│   ├── memory/         # Session memory store
+│   ├── stt/            # Speech-to-Text
+│   ├── tts/            # Text-to-Speech
+│   ├── utils/          # Helpers & contradiction detection
+│   └── main.py
+├── streamlit_app.py    # Voice UI
+└── ARCHITECTURE.md
+
+## How to Run
+
+# Start Ollama
+1. Install Ollama: https://ollama.com/download
+2. ollama run llama3:8b-instruct-q4_0
+
+# Start Backend
+uvicorn app.main:app --reload
+
+# Start Backend
+uvicorn app.main:app --reload
+
+## Example Voice Queries
+
+Hindi:
+“प्रधानमंत्री आवास योजना के बारे में बताइए।”
+
+Odia:
+“ମୋ ଆୟ ୨ ଲକ୍ଷ ଟଙ୍କା, ମୁଁ କେଉଁ ଯୋଜନା ପାଇଁ ଯୋଗ୍ୟ?”
+
+Marathi:
+“माझे उत्पन्न दोन लाख आहे.”
