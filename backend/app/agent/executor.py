@@ -3,24 +3,35 @@ from app.tools.eligibility_engine import check_eligibility
 
 def execute_tools(plan, user_text):
     """
-    Executor with safe fallback
+    FINAL Executor
+    - Trusts planner
+    - Never blocks valid answers
+    - Never forces fallback loops
     """
 
-    # If planner returned plain text (most common case)
+    # 🔹 If planner already returned text, just speak it
     if isinstance(plan, str):
-        return plan
+        return plan.strip()
 
-    tool = plan.get("tool")
+    if not isinstance(plan, dict):
+        return None
 
+    tool = plan.get("tool", "direct_answer")
+
+    # 🔹 Scheme retrieval
     if tool == "scheme_retriever":
-        return retrieve_scheme(user_text)
+        result = retrieve_scheme(user_text)
+        return result.strip() if isinstance(result, str) else None
 
+    # 🔹 Eligibility checking
     if tool == "eligibility_checker":
-        return check_eligibility(user_text)
+        result = check_eligibility(user_text)
+        return result.strip() if isinstance(result, str) else None
 
-    if tool == "direct_answer":
-        return plan.get("reason")
+    # 🔹 Direct answer (GK, history, general questions)
+    reason = plan.get("reason")
+    if isinstance(reason, str) and len(reason.strip()) > 2:
+        return reason.strip()
 
-    # FINAL fallback
-    return plan.get("reason", "कृपया थोड़ा और विवरण दें।")
-
+    # 🔹 Absolute last fallback (should almost never trigger)
+    return "मुझे इस प्रश्न का उत्तर अभी उपलब्ध नहीं है।"

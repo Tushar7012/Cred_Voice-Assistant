@@ -1,4 +1,4 @@
-from app.agent.llama_planner import llama_plan
+from app.agent.grok_planner import grok_plan
 from app.agent.executor import execute_tools
 from app.agent.evaluator import evaluate_response
 from app.memory.memory_store import (
@@ -8,46 +8,39 @@ from app.memory.memory_store import (
     add_contradiction
 )
 from app.utils.contradiction import detect_contradictions
+from app.utils.memory_recall import build_memory_recall_text
 
 
 def run_agent(user_text: str, language: str, session_id: str):
     """
-    Stable agent loop:
-    Planner → (Optional tools) → Memory
+    Full agent loop:
+    Plan → Execute → Evaluate → Memory Update → Spoken Memory Recall
     """
 
     memory = get_session_memory(session_id)
 
-    plan = llama_plan(user_text, language, memory)
-
-    if isinstance(plan, str) and len(plan.strip()) > 20:
-        append_history(session_id, "user", user_text)
-        append_history(session_id, "assistant", plan)
-        return plan
+    plan = grok_plan(user_text, language, memory)
 
     result = execute_tools(plan, user_text)
 
-    if isinstance(result, str) and len(result.strip()) > 20:
-        append_history(session_id, "assistant", result)
-        return result
-
     ok = evaluate_response(plan, result)
-
     if not ok:
-        clarification = "कृपया अपनी उम्र, आय और राज्य की जानकारी दें।"
-        append_history(session_id, "assistant", clarification)
-        return clarification
+        return plan.get("reason")
 
-    if isinstance(plan, dict):
-        new_facts = plan.get("facts_to_store", {})
+    new_facts = plan.get("facts_to_store", {})
 
-        contradictions = detect_contradictions(memory, new_facts)
-        for c in contradictions:
-            add_contradiction(session_id, c)
+    contradictions = detect_contradictions(memory, new_facts)
+    for c in contradictions:
+        add_contradiction(session_id, c)
 
-        for k, v in new_facts.items():
-            update_fact(session_id, k, v)
+    for k, v in new_facts.items():
+        update_fact(session_id, k, v)
 
-    final_safe = "आप किस सरकारी योजना के बारे में जानकारी चाहते हैं?"
-    append_history(session_id, "assistant", final_safe)
-    return final_safe
+    append_history(session_id, "user", user_text)
+    append_history(session_id, "assistant", result)
+
+    recall_text = build_memory_recall_text(memory, language)
+
+    final_response = f"{recall_text}{result}"
+
+    return final_response
