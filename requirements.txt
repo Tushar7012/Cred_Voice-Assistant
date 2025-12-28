@@ -1,0 +1,31 @@
+# Core Dependencies
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# Voice Processing
+requests>=2.31.0
+sounddevice>=0.4.6
+soundfile>=0.12.1
+pydub>=0.25.1
+numpy>=1.24.0
+
+# LLM Integration
+groq>=0.4.0
+
+# Vector Database & Embeddings
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+
+# Frontend
+streamlit>=1.29.0
+streamlit-webrtc>=0.47.0
+av>=11.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+# Utilities
+loguru>=0.7.0
+tenacity>=8.2.0
